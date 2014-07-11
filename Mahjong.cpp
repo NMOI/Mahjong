@@ -6,7 +6,8 @@
 #include <ctime>
 #include <vector>
 #include <iterator>
-//#include "jsoncpp/json.h"
+#include <fstream>
+#include "json.h"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ inline int hsh(char T)
 {
     if(T == 'W') return 0;
     if(T == 'T') return 1;
-    if(T == 'B') return 2;
+    else return 2;
 }
 
 inline int a(int i)
@@ -82,6 +83,7 @@ int minvalue()
         if(value[i] == 2) return i;
     for(int i = 0;i < notfrozen;++i)
         if(value[i] == 3) return i;
+    return 0;
 }
 
 int minvalue(string T)
@@ -121,6 +123,7 @@ int minvalue(string T)
         if(cards[i] == T) continue;
         if(value[i] == 3) return i;
     }
+    return 3;
 }
 
 bool checkhu(int num[10]) //感觉是Sample里一个很nice的实现，抄过来，传参直接传cnt[i]就好
@@ -208,8 +211,7 @@ void getcards(string s)
         if(s[i]>='A'&&s[i]<'Z') cards.push_back(s.substr(i,2));
     }
 }
-Json::Value a=input["requests"];
-Json::Value b=input["responses"];//暂时没用
+Json::Value m,n;//暂时没用
 void get()
 {
     ifstream in("in.txt");
@@ -222,12 +224,14 @@ void get()
 	Json::Reader reader;
 	Json::Value input;
     reader.parse(str, input);
+    m=input["requests"],n=input["responses"];
+    int i=m.size();
 }
 void replay()
 {
-    for(int i=0;i<a.size();i++)
+    for(int i=0;i<m.size();i++)
     {
-        string t=a[i].asString();
+        string t=m[i].asString();
         switch (t[0]) {
             case '0':
                 myID=t[1]-'0';
@@ -282,10 +286,13 @@ int main()
      复盘的时候要保证cards里面没有空元素
      如果是只需要输出PASS的话请直接goto输出部分……
      */
-    cards.push_back(now);
+    get();
+    replay();
+//    cards.push_back(now);
     numcheck();
     valuecheck();
     decide();
+    send();
     /*
      输出部分已经放在output里，不过我感觉会有很多bug，建议先判一下是不是空
      */
