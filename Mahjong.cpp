@@ -125,14 +125,14 @@ int minvalue(string T)
 
 bool checkhu(int num[10]) //感觉是Sample里一个很nice的实现，抄过来，传参直接传cnt[i]就好
 {
-/*
- 大概意思：
- 只判断一种花色
- num[0]表示距离胡牌还差几张,初始为这种花色牌总数
- num[1]到num[9]表示这张牌还有几张
- 另外这个函数判断的是能否胡，是胡牌的必要条件而不是充分条件
-*/
-
+    /*
+     大概意思：
+     只判断一种花色
+     num[0]表示距离胡牌还差几张,初始为这种花色牌总数
+     num[1]到num[9]表示这张牌还有几张
+     另外这个函数判断的是能否胡，是胡牌的必要条件而不是充分条件
+     */
+    
     for (int i = 1; i <= 9; i++)
 		if (num[i] < 0)
 			return false;
@@ -148,7 +148,7 @@ bool checkhu(int num[10]) //感觉是Sample里一个很nice的实现，抄过来
 				return true;
 		return false;
 	}
-
+    
 	for (int i = 1; i <= 9; i++)
 	{
 		if (num[i] > 0)
@@ -175,7 +175,7 @@ bool checkhu(int num[10]) //感觉是Sample里一个很nice的实现，抄过来
 			}
 		}
 	}
-
+    
 	return false;
 }
 
@@ -201,25 +201,94 @@ void decide()
         else if(sl == 3 && value[pos] == 1) {output = "GANG";}
     }
 }
-
+void getcards(string s)
+{
+    for(int i=1;i<s.size();i++)
+    {
+        if(s[i]>='A'&&s[i]<'Z') cards.push_back(s.substr(i,2));
+    }
+}
+Json::Value a=input["requests"];
+Json::Value b=input["responses"];//暂时没用
+void get()
+{
+    ifstream in("in.txt");
+    string str,tmp;
+    if(in.is_open())
+    {
+        while(in>>tmp)
+            str += tmp;
+    }
+	Json::Reader reader;
+	Json::Value input;
+    reader.parse(str, input);
+}
+void replay()
+{
+    for(int i=0;i<a.size();i++)
+    {
+        string t=a[i].asString();
+        switch (t[0]) {
+            case '0':
+                myID=t[1]-'0';
+                break;
+            case '1':
+                getcards(t);
+                break;
+            case '2':
+                now=t.substr(1,2);
+                break;
+            case '3'://冻结句子
+                //                if("PLAY"==t.substr(2,4))
+                //                {
+                //                    continue;
+                //                }
+                //                if("PENG"==t.substr(2,4))
+                //                {
+                //                    for(int i=1;i<=3;i++)frozen[t[1]-'0'].push_back(t.substr(6,2));
+                //                }
+                //                if("GANG"==t.substr(2,4)
+                //                {
+                //                    for(int i=1;i<=4;i++)frozen[t[1]-'0'].push_back(t.substr(6,2));
+                //                }
+                //                if("HUSELF"==t.substr(2,6)
+                //                {
+                //                    continue;
+                //                }
+                //                else
+                break;
+            case '4'://给出目标牌型
+                continue;
+        }
+    }
+}
+void send()
+{
+    string myAction;
+    Json::Value ret;
+    ret["response"] = output;
+    ret["data"] = "";
+    Json::FastWriter writer;
+    cout << writer.write(ret) << endl;
+}
 int main()
 {
-
+    
     /*
-    输入要实现的功能:
-    第一回合获取编号后放在myID里；
-    第二回合获取手牌后放在cards里；
-    其他回合把手牌放在cards里，待处理的牌（别人打出的或者自己摸到的）放在now里，把输入信息中的第一个数字放在operID里;
-    复盘的时候要保证cards里面没有空元素
-    如果是只需要输出PASS的话请直接goto输出部分……
-    */
+     输入要实现的功能:
+     第一回合获取编号后放在myID里；
+     第二回合获取手牌后放在cards里；
+     其他回合把手牌放在cards里，待处理的牌（别人打出的或者自己摸到的）放在now里，把输入信息中的第一个数字放在operID里;
+     复盘的时候要保证cards里面没有空元素
+     如果是只需要输出PASS的话请直接goto输出部分……
+     */
     cards.push_back(now);
     numcheck();
     valuecheck();
     decide();
     /*
-    输出部分已经放在output里，不过我感觉会有很多bug，建议先判一下是不是空
-    */
-
+     输出部分已经放在output里，不过我感觉会有很多bug，建议先判一下是不是空
+     */
+    
     return 0;
 }
